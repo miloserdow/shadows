@@ -24,7 +24,7 @@
   You can redistribute it and/or modify it under the terms of the
   GNU General Public License (GPL) as published by the Free Software Foundation,
   either version 3 of the License or (at your option) any later version.
-  A copy of the GPL license is provided in the "GPL.txt" file.
+  A copy of the GPL license is provided in the "LICENSE" file.
   
   
 -------------------------------------------------------------------------------
