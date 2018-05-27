@@ -11,6 +11,8 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include "GaborFilter.h"
 
+#define MX_DIMENSIONS 512
+
 GaborFilter::GaborFilter() {
 }
 
@@ -26,8 +28,8 @@ void GaborFilter::getDistance(const std::vector<cv::Mat>& projectionsA,
 		int cols = projectionsA[0].cols;
 
 		distance.create(rows, cols, CV_32F);
-		const float* projAPtrs[dimensions];
-		const float* projBPtrs[dimensions];
+		const float* projAPtrs[MX_DIMENSIONS];
+		const float* projBPtrs[MX_DIMENSIONS];
 
 		for (int y = 0; y < rows; ++y) {
 			const uchar* maskPtr = (!mask.empty() ? mask.ptr(y) : NULL);

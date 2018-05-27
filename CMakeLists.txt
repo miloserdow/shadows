@@ -13,6 +13,8 @@ include_directories(${OpenCV_INCLUDE_DIRS})
 add_library(shadows_lib ${shadows_lib_src})
 target_link_libraries(shadows_lib ${OpenCV_LIBS})
 
+set(CMAKE_CXX_FLAGS "-O2 -fno-stack-protector -Werror=vla")
+
 # Build demo application and copy samples if required by option
 if(BUILD_EXAMPLES)
 	set(sample_src
@@ -22,5 +24,5 @@ if(BUILD_EXAMPLES)
 	target_link_libraries(shadows_Demo shadows_lib)
 	
 	# Copy samples to build directory
-	file(COPY yourDir DESTINATION yourDestination)
+	file(COPY samples/ DESTINATION samples/)
 endif(BUILD_EXAMPLES)

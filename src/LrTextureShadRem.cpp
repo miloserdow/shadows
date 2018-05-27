@@ -11,6 +11,8 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include "LrTextureShadRem.h"
 
+#define MXSIZE 10000
+
 const std::vector<cv::Mat> LrTextureShadRem::skeletonKernels = getSkeletonKernels();
 
 LrTextureShadRem::LrTextureShadRem(const LrTextureShadRemParams& params) {
@@ -159,8 +161,8 @@ void LrTextureShadRem::maskDiff(const cv::Mat& m1, const cv::Mat& m2, cv::Mat& d
 
 	for (int y = 0; y < m1.rows; ++y) {
 		const uchar* m1Ptr = m1.ptr(y);
-		const uchar* m2Ptrs[2 * m2Radius + 1];int
-		count = 0;
+		const uchar* m2Ptrs[MXSIZE];
+		int count = 0;
 		for (int y2 = y - m2Radius; y2 <= y + m2Radius; ++y2) {
 			if (y2 < 0 || y2 >= m1.rows) {
 				m2Ptrs[count] = NULL;

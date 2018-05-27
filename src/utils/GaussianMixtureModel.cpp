@@ -12,6 +12,8 @@
 #include <limits>
 #include "GaussianMixtureModel.h"
 
+#define GAUSSIANS 512
+
 GaussianMixtureModel::GaussianMixtureModel() {
 	xVals = NULL;
 	aVals = new float[3];
@@ -118,18 +120,19 @@ void GaussianMixtureModel::update(const cv::Mat& example, const cv::Mat& example
 	if (checkSizeAndType(example, exampleWeights)) {
 		int gaussians = means.size();
 		int dimensions = example.channels();
+                
+		// TODO: fix memory leaks
+		uchar** meanPtrs = new uchar*[gaussians];
+		ushort** variancePtrs = new ushort*[gaussians];
+		float** weightPtrs = new float*[gaussians];
+		float** countPtrs = new float*[gaussians];
+		float** logisticValPtrs = new float*[gaussians];
+		int** indexPtrs = new int*[gaussians];
 
-		uchar* meanPtrs[gaussians];
-		ushort* variancePtrs[gaussians];
-		float* weightPtrs[gaussians];
-		float* countPtrs[gaussians];
-		float* logisticValPtrs[gaussians];
-		int* indexPtrs[gaussians];
+		float* p = new float[gaussians];
 
-		float p[gaussians];
-
-		float yVals[gaussians];
-		float hVals[gaussians];
+		float* yVals = new float[gaussians];
+		float* hVals = new float[gaussians];
 
 		for (int y = 0; y < example.rows; ++y) {
 			const uchar* examplePtr = example.ptr(y);
@@ -322,10 +325,10 @@ void GaussianMixtureModel::evaluate(const cv::Mat& example, cv::Mat& result, dou
 		int gaussians = means.size();
 		int dimensions = example.channels();
 
-		const uchar* meanPtrs[gaussians];
-		const ushort* variancePtrs[gaussians];
-		const float* weightPtrs[gaussians];
-		const int* indexPtrs[gaussians];
+		const uchar* meanPtrs[GAUSSIANS];
+		const ushort* variancePtrs[GAUSSIANS];
+		const float* weightPtrs[GAUSSIANS];
+		const int* indexPtrs[GAUSSIANS];
 
 		for (int y = 0; y < example.rows; ++y) {
 			const uchar* examplePtr = example.ptr(y);
@@ -386,10 +389,10 @@ void GaussianMixtureModel::classify(const cv::Mat& example, cv::Mat& result, dou
 		int gaussians = means.size();
 		int dimensions = example.channels();
 
-		const uchar* meanPtrs[gaussians];
-		const ushort* variancePtrs[gaussians];
-		const float* weightPtrs[gaussians];
-		const int* indexPtrs[gaussians];
+		const uchar* meanPtrs[GAUSSIANS];
+		const ushort* variancePtrs[GAUSSIANS];
+		const float* weightPtrs[GAUSSIANS];
+		const int* indexPtrs[GAUSSIANS];
 
 		for (int y = 0; y < example.rows; ++y) {
 			const uchar* examplePtr = example.ptr(y);
@@ -442,9 +445,9 @@ void GaussianMixtureModel::estimateMean(cv::Mat& mean, double weightThreshold) c
 
 		int gaussians = means.size();
 		int dimensions = means[0].channels();
-		const uchar* meanPtrs[gaussians];
-		const float* weightPtrs[gaussians];
-		const int* indexPtrs[gaussians];
+		const uchar* meanPtrs[GAUSSIANS];
+		const float* weightPtrs[GAUSSIANS];
+		const int* indexPtrs[GAUSSIANS];
 
 		for (int y = 0; y < means[0].rows; ++y) {
 			uchar* meanPtr = mean.ptr(y);
@@ -457,7 +460,8 @@ void GaussianMixtureModel::estimateMean(cv::Mat& mean, double weightThreshold) c
 
 			for (int x = 0; x < means[0].cols; ++x) {
 				float weightSum = 0;
-				float vals[dimensions];
+				// TODO: fix memory leak
+				float* vals = new float[dimensions];
 				for (int d = 0; d < dimensions; ++d) {
 					vals[d] = 0;
 				}
@@ -530,7 +534,8 @@ void GaussianMixtureModel::getLogisticVals(int gaussians, const float* xVals, co
 		const float* bVals, float* hVals) {
 	float initA = 1;
 	float bestB = 0;
-	float h[gaussians];
+	// TODO: fix memory leak
+	float* h = new float[gaussians];
 	float minError = std::numeric_limits<float>::infinity();
 
 	float yy = 0;
